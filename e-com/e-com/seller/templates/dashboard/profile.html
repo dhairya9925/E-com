@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings</title>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.js" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+</head>
+<body class="dark bg-gray-900 text-gray-100 min-h-screen p-4 md:p-6">
+    {% if seller %}
+    <div class="max-w-4xl mx-auto">
+        <!-- <div class="absolute top-4 left-5">
+            <h1 class="text-3xl font-bold">
+                <a href="../seller">
+                    MV-M
+                </a>
+            </h1>
+        </div> -->
+        <!-- Header -->
+        <div class="bg-gray-800 rounded-lg p-6 mb-8">
+            <div class="flex flex-col md:flex-row items-center gap-8">
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" 
+                        alt="Profile picture" 
+                        class="w-32 h-32 rounded-full object-cover">
+                    <button class="absolute bottom-0 right-0 bg-gray-700 p-2 rounded-full hover:bg-gray-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="text-center md:text-left space-y-2">
+                    <h1 class="text-3xl font-semibold">{{ seller.name }}</h1>
+                    <!-- <p class="text-gray-400">Senior Seller</p> -->
+                    <div class="mt-2 flex flex-wrap justify-center md:justify-start gap-2">
+                        <!-- <span class="px-4 py-2 bg-gray-700 rounded-full text-sm font-semibold">Verified Seller</span> -->
+                        <!-- <span class="px-4 py-2 bg-gray-700 rounded-full text-sm font-semibold">Premium Member</span> -->
+                    </div>
+                </div>
+                <div class="ml-auto ">
+                    <button class=" w-full grid mb-2 ml-auto bg-indigo-600 hover:bg-indigo-700 px-6 py-3 rounded-lg text-lg font-semibold">
+                        Edit Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <form id="profileForm" method="post" class="space-y-8">
+            {% csrf_token %}
+            <!-- Personal Information -->
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">Personal Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-400 mb-1">Full Name</label>
+                        <input type="text" id="name" name="name" value="{{ seller.name }}" required
+                            class="w-full px-4 py-2 rounded-md bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-400 mb-1">Email Address</label>
+                        <input type="email" id="email" name="email" value="{{ seller.email }}" required
+                            class="w-full px-4 py-2 rounded-md bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <!-- Phone Number -->
+                    <div class="w-full max-w-md">
+                        <label for="contact" class="block text-sm font-medium text-gray-400 mb-1">
+                            Phone Number
+                        </label>
+                        <div class="flex items-center w-full">
+                            <!-- Custom Dropdown -->
+                            <div class="relative inline-block w-[140px]" x-data="{ open: false, selectedCode: '{{ seller_dialCode.dialCode }}', selectedFlag: '{{ seller_dialCode.image }}', searchQuery: '' }">
+                                <!-- Custom Dropdown Button -->
+                                <button type="button" @click="open = !open" class="flex gap-2 items-center h-[42px] w-full rounded-es-lg rounded-ss-lg border-r-2 border-gray-500 bg-gray-700 text-gray-200 px-3 hover:bg-dark-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" aria-haspopup="listbox" aria-expanded="false">
+                                    <img :src="selectedFlag" class="w-4 h-4 rounded-full" />
+                                    <span x-text="selectedCode" class="flex-1 text-left"></span>
+                                    <svg class="h-4 w-4 text-dark-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                
+                                <!-- Dropdown List -->
+                                <ul x-show="open" @click.away="open = false" class="absolute z-150 left-0 w-[350px] mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-xl py-1 max-h-60 overflow-auto" role="listbox">
+                                    <!-- Search Input -->
+                                    <li class="px-3 py-2">
+                                        <input type="text" x-model="searchQuery" class="w-full rounded-lg bg-gray-700 text-gray-200 px-3 py-1" placeholder="Search countries..." />
+                                    </li>
+                                
+                                    <!-- Filtered Country List -->
+                                    {% for i in countryCodes %}
+                                    <li x-show="searchQuery === '' || '{{ i.country }}'.toLowerCase().includes(searchQuery.toLowerCase()) || '{{ i.dialCode }}'.includes(searchQuery)" :class="{'hidden': searchQuery && !('{{ i.country }}'.toLowerCase().includes(searchQuery.toLowerCase()) || '{{ i.dialCode }}'.includes(searchQuery))}" class="cursor-pointer">
+                                        <button type="button" @click="selectedCode = '{{ i.dialCode }}'; selectedFlag  = '{{ i.image }}'; open = false" class="flex gap-3 items-center w-full px-3 py-2 text-gray-200 hover:bg-dark-700 transition-colors" role="option">
+                                            <img src="{{ i.image }}" class="h-4 w-4 rounded-full"/>
+                                            <span>{{ i.country }} ({{ i.dialCode }})</span>
+                                        </button>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                <input type="hidden" name="dialCode" x-bind:value="selectedCode">
+                            </div>
+                            
+                            <!-- Phone Number Input with matching height -->
+                            <input type="tel" id="contact" name="contact" required maxlength="11" oninput="formatPhoneNumber(event)" 
+                                class="w-full h-[42px] px-4 py-2 rounded-se-lg rounded-ee-lg bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-indigo-500" 
+                                placeholder="12345 67890" value="{{ seller.contact }}" autocomplete="on"/>
+                            
+                        </div>
+                        <p id="phoneError" class="text-red-400 text-sm hidden"></p>
+                    </div>
+                    
+                    
+                    
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-400 mb-1">Password</label>
+                        <input type="password" id="password" name="password"
+                            class="w-full px-4 py-2 rounded-md bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-indigo-500">
+                        <p class="mt-1 text-sm text-gray-400">Leave blank to keep current password</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Address Information -->
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">Address Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label for="address" class="block text-sm font-medium text-gray-400 mb-1">Street Address</label>
+                        <input type="text" id="address" name="address" value="{{ seller.address }}" required
+                            class="w-full px-4 py-2 rounded-md bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label for="city" class="block text-sm font-medium text-gray-400 mb-1">City</label>
+                        <input type="text" id="city" name="city" value="{{ seller.city }}" required
+                            class="w-full px-4 py-2 rounded-md bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label for="district" class="block text-sm font-medium text-gray-400 mb-1">District</label>
+                        <input type="text" id="district" name="district" value="{{ seller.district }}" required
+                            class="w-full px-4 py-2 rounded-md bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label for="state" class="block text-sm font-medium text-gray-400 mb-1">State</label>
+                        <input type="text" id="state" name="state" value="{{ seller.state }}" required
+                            class="w-full px-4 py-2 rounded-md bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label for="pincode" class="block text-sm font-medium text-gray-400 mb-1">Pincode</label>
+                        <input type="text" id="pincode" name="pincode" value="{{ seller.pincode }}" required pattern="[0-9]{6}"
+                            class="w-full px-4 py-2 rounded-md bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Business Information -->
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">Business Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="companyName" class="block text-sm font-medium text-gray-400 mb-1">Company Name</label>
+                        <input type="text" id="companyName" name="companyName" value="{{ seller.companyName }}" required
+                            class="w-full px-4 py-2 rounded-md bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label for="storeName" class="block text-sm font-medium text-gray-400 mb-1">Store Name</label>
+                        <input type="text" id="storeName" name="storeName" value="{{ seller.storeName }}" required
+                            class="w-full px-4 py-2 rounded-md bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label for="gstin" class="block text-sm font-medium text-gray-400 mb-1">GSTIN</label>
+                        <input type="text" id="gstin" name="gstin" required value="{{ seller.gstin }}" pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$"
+                            class="w-full px-4 py-2 rounded-md bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-indigo-500">
+                        <p class="mt-1 text-sm text-gray-400">Format: 22AAAAA0000A1Z5</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex justify-end gap-4">
+                <a href="profile">
+                    <button type="button" 
+                    class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md focus:ring-2 focus:ring-gray-500">
+                    Reset
+                    </button>
+                </a>
+                <button type="submit"
+                    class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-md focus:ring-2 focus:ring-indigo-500">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+
+        <!-- Success/Error Message -->
+        <!-- <div id="messageBox" class="fixed bottom-4 right-4 max-w-md hidden">
+            <div class="rounded-lg p-4 flex items-center gap-3">
+                <svg class="w-5 h-5" id="messageIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+                <p id="messageText"></p>
+            </div>
+        </div> -->
+    </div>
+    
+    <script>
+        // Form handling
+        // const form = document.getElementById('profileForm');
+        // const messageBox = document.getElementById('messageBox');
+        // const messageIcon = document.getElementById('messageIcon');
+        // const messageText = document.getElementById('messageText');
+        
+        // // Sample initial data - in real application, this would come from your backend
+        // const initialData = {
+        //     name: 'John Doe',
+        //     email: 'john@example.com',
+        //     contact: '9876543210',
+        //     address: '123 Main Street',
+        //     city: 'Mumbai',
+        //     district: 'Mumbai',
+        //     state: 'Maharashtra',
+        //     pincode: '400001',
+        //     companyName: 'Tech Solutions',
+        //     gstin: '27AAAAA0000A1Z5',
+        //     storeName: 'Tech Store'
+        // };
+
+        // // Populate form with initial data
+        // function populateForm() {
+        //     Object.keys(initialData).forEach(key => {
+        //         const input = document.getElementById(key);
+        //         if (input && key !== 'password') {
+        //             input.value = initialData[key];
+        //         }
+        //     });
+        // }
+        
+        // // Reset form to initial data
+        // function resetForm() {
+        //     populateForm();
+        //     showMessage('Form reset to initial values', 'info');
+        // }
+        
+        // // Show message function
+        // function showMessage(text, type) {
+        //     messageText.textContent = text;
+        //     messageBox.className = `fixed bottom-4 right-4 max-w-md rounded-lg p-4 flex items-center gap-3 ${
+        //         type === 'success' ? 'bg-green-900 text-green-300' :
+        //         type === 'error' ? 'bg-red-900 text-red-300' :
+        //         'bg-blue-900 text-blue-300'
+        //     }`;
+
+        //     // Set icon based on message type
+        //     messageIcon.innerHTML = type === 'success' 
+        //     ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>' 
+        //     : type === 'error' 
+        //     ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>' 
+        //     : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+
+        //     messageBox.classList.remove('hidden');
+            
+        //     // Hide message after 3 seconds
+        //     setTimeout(() => {
+        //         messageBox.classList.add('hidden');
+        //     }, 3000);
+        // }
+        
+        // // Form submission
+        // form.addEventListener('submit', (e) => {
+        //     e.preventDefault();
+            
+        //     // Basic validation
+        //     const gstin = document.getElementById('gstin').value;
+        //     const gstinPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+        //     const pincode = document.getElementById('pincode').value;
+        //     const pincodePattern = /^[0-9]{6}$/;
+
+        //     if (!gstinPattern.test(gstin)) {
+        //         showMessage('Please enter a valid GSTIN', 'error');
+        //         return;
+        //     }
+
+        //     if (!pincodePattern.test(pincode)) {
+        //         showMessage('Please enter a valid 6-digit pincode', 'error');
+        //         return;
+        //     }
+
+        //     // In a real application, you would send this data to your backend
+        //     const formData = new FormData(form);
+        //     const data = Object.fromEntries(formData.entries());
+        //     console.log('Form data:', data);
+            
+        //     // Show success message
+        //     showMessage('Profile updated successfully', 'success');
+        // });
+
+        // // Initialize form
+        // populateForm();
+    </script>
+    <script>
+        function formatPhoneNumber(event) {
+            const input = event.target;
+            let value = input.value.replace(/\D/g, ''); // Remove all non-digit characters
+
+            // Format as 123-456-7890
+            if (value.length > 5) {
+                value = value.replace(/(\d{5})(\d{1,5})/, '$1 $2');
+            }
+            // if (value.length > 3 && value.length <= 6) {
+            //     value = value.replace(/(\d{3})(\d{1,3})/, '$1 $2');
+            // } else if (value.length > 6) {
+            //     value = value.replace(/(\d{3})(\d{3})(\d{1,4})/, '$1 $2 $3');
+            // }
+
+            input.value = value; // Set formatted value back to the input
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdowns = document.querySelectorAll('[x-data]');
+            dropdowns.forEach(dropdown => {
+                if (!dropdown.contains(e.target)) {
+                    dropdown.__x.$data.open = false;
+                }
+            });
+        });
+
+        // Handle keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            const dropdown = document.querySelector('[x-data]');
+            if (!dropdown.__x.$data.open) return;
+
+            if (e.key === 'Escape') {
+                dropdown.__x.$data.open = false;
+            }
+        });
+    </script>
+    {% else %}
+    <div class="flex justify-center items-center h-screen">
+        <h1 class="text-center">Something went wrong! Please login again</h1>
+    </div>
+    {% endif %}
+</body>
+</html>
