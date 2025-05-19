@@ -1,0 +1,110 @@
+import subprocess
+import os, sys
+
+def help():
+    print("  --help                         Shows all commands available")
+    print("  --init                         To initialize (for first-time setup on a new device)")
+    print("  --run                          Execute program")
+    print("  --makemigrations               Makemigration program to check changes in models")
+    print("  --migrate                      Migrate database make changes to database")
+    print("  --install <package_name>       To install packages")
+    print("  --uninstall <package_name>     To uninstall packages")
+    print("  --list                         Returns list of installed")
+    print("  --startapp <app_name>          Start new app")
+    print("\n  Syntax:\n     python ecom <command>")
+
+def init():
+    subprocess.run(
+        "pip install virtualenv && python -m venv .venv && pip install -r requirements.txt",
+        # ".venv\\Scripts\\activate && cd e-com && python manage.py runserver",
+        shell=True
+    )
+
+def run():
+    subprocess.run(
+        ".venv\\Scripts\\activate && cd e-com && python manage.py runserver",
+        shell=True
+    )
+
+def install(package):
+    subprocess.run(
+        f".venv\\Scripts\\activate && cd e-com && pip install {package} && pip freeze > requirements.txt",
+        shell=True
+    )
+
+def uninstall(package):
+    subprocess.run(
+        f".venv\\Scripts\\activate && cd e-com && pip uninstall {package} && pip freeze > requirements.txt",
+        shell=True
+    )
+
+def list():
+    subprocess.run(
+        f".venv\\Scripts\\activate && cd e-com && pip list",
+        shell=True
+    )
+
+def startapp(app):
+    subprocess.run(
+        f".venv\\Scripts\\activate && cd e-com && python manage.py startapp {app}",
+        shell=True
+    )
+
+def makemigrations():
+    subprocess.run(
+        ".venv\\Scripts\\activate && cd e-com && python manage.py makemigrations",
+        shell=True
+    )
+
+def migrate():
+    subprocess.run(
+        ".venv\\Scripts\\activate && cd e-com && python manage.py migrate",
+        shell=True
+    )
+
+
+# Mapping the functions to their name
+
+function_list = {
+    "help": help,
+    "init": init,
+    "run": run,
+    "install": install,
+    "uninstall": uninstall,
+    "list": list,
+    "startapp": startapp,
+    "makemigrations": makemigrations,
+    "migrate": migrate,
+}
+
+if __name__ == "__main__":
+    try:
+        if len(sys.argv) > 1:
+            command = sys.argv[1].lower()
+            function = function_list.get(command)
+            
+            # print(f"Length: {}")
+                
+            if function:
+                if command == "install" or command == "uninstall" or command == "startapp":
+                    if len(sys.argv) < 3:
+                        print("ERROR: You must give at least one requirement to install\n")
+                        print("Syntax:  python ecom", command, "{package_name}")
+                    elif len(sys.argv) == 3:
+                        function(sys.argv[2])
+                else:
+                    function()
+            else:
+                print(f"Invalid Command: \'{sys.argv[1]}\' is not recognized")
+                print("Command list")
+                for i in function_list:
+                    print("- "+i)
+        else:
+            print("1 argument expected given 0")
+            print("Command list")
+            for i in function_list:
+                print("- "+i)
+    except KeyboardInterrupt:
+        pass
+    except Exception as e:
+        print(f"Exception:\n{e}")
