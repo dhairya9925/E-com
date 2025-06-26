@@ -1,9 +1,12 @@
 from django.test import TestCase
-
+import hashlib
 # Create your tests here.
-lst = []
+string = "Dhairya"
 
-if lst:
-    print("non empty")
-else:
-    print("empty")
+string = string.encode()
+print(string)
+string = hashlib.sha256(string).hexdigest()
+# if lst:
+#     print("non empty")
+# else:
+print(string)

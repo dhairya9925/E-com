@@ -8,12 +8,15 @@ from random import randint
 from django.utils.text import slugify
 import uuid
 from datetime import datetime
+from django.db import IntegrityError
+import ast, re, json
+import hashlib
+from django.utils.text import slugify
+from django.http import JsonResponse
 
 # -------------------------------------------------------------------------------------------------------------------------
 
 # --- Store data in sessoin ---
-
-
 def get_user_from_session(request):
     try:
         user_session_id = request.COOKIES[settings.USER_SESSION_COOKIE_NAME]
@@ -73,6 +76,42 @@ def get_formatted_address(request):
         
     return None
 
+
+def get_quantity(request):
+    user = get_user_from_session(request)
+    if user == None:
+        return None
+    cart = Cart.objects.get(user_id = user.id)
+    quantity = 0
+    for item in cart.products:
+
+        print(f"Item: {item.values}")
+        for qty in item:
+            quantity += int(qty)
+        print(f"Item: {item}")
+    #     quantity += item
+    print(f"Quantity: {quantity}")
+    # temp = {}
+    # val = {"key1" : 2999}
+    # temp.update(val)
+    # val2 = {"key2" : 3999}
+    # temp.update(val2)
+    # print(f"Temp: {temp}")
+    return quantity
+    
+    #     print(f"Item: {item}")
+
+
+def cart_count(request):
+    user = get_user_from_session(request)
+    cart = Cart.objects.get(user=user.id)
+    # print(cart.)
+    print("Count" + str(len(cart.products[0])))
+    count = 0
+    for id, qty in cart.products[0].items():
+        count += qty
+    return JsonResponse({'count': count})
+
 # def access_custom_data_from_session(request):
 #     # Accessing custom session data
 #     user_session_id = request.session.get(settings.USER_SESSION_COOKIE_NAME, None)  # Default to None if not found
@@ -99,7 +138,12 @@ def login(request):
 
         email = request.POST.get('email')
         password = request.POST.get('password')
-        print("\n--- Authenticate ---")
+
+        # Encrypt
+        # password = password.encode()
+        # password = hashlib.sha256(password).hexdigest()
+
+        # print("\n--- Authenticate ---")
         user = authenticate(request, email, password)
         if user is not None:
             print("\n--- Logged IN ---")
@@ -135,6 +179,10 @@ def register(request):
         name = request.POST.get('name')
         email = request.POST.get('email')
         password = request.POST.get('password')
+
+        # Encrypt
+        # password = password.encode()
+        # password = hashlib.sha256(password).hexdigest()
         
         if name in names or email in emails:
             print("\n\n -- IF -- ")
@@ -166,37 +214,51 @@ def home(request):
     print(f"Cookie Data(get_user_from_session) --->{request.COOKIES}")
     user = get_user_from_session(request)
     products = Product.objects.all()
+    quantity_cart = get_quantity(request)
     # print(f"--- IS {user} ----")
     if user is not None:
         print(f"\n\'{user}\' IS LOGGED IN {request.COOKIES["user_session_id"]}")
 
         # response = render(request, "home.html")
         # response.set_cookie(settings.USER_SESSION_COOKIE_NAME, request.session.session_key)
-
+        context = {
+            "user": user,
+            "products": products
+        }
 
         if request.method == "POST":
+            
             print(f"\n__ADDED_TO_CART__\n")
             currProduct = request.POST["currProduct"]
             product = Product.objects.get(id = currProduct)
             cart = Cart.objects.get(user = user)
-            addStatus = {"stauts": 0}
-
+            item_in_cart = False
             productList = []
-            for item in cart.products:
-                print(f"Item : {item}")
-                for id, quantity in item.items():
-                    if currProduct == id:
-
-                        item[id] += 1
-                        cart.price = (cart.price + product.price) if (cart.price is not None) else (product.price)
-                        addStatus["stauts"] = 1
-
-            if not cart.products or addStatus["stauts"] == 0:    # if cart.products is empty or addStaus is false(0)
-                print(f"Add status : {addStatus['stauts']}")
+            
+            if len(cart.products) < 1:
                 cart.products.append({
                     currProduct: 1,
                 })
-                cart.price += product.price
+                cart.price = product.price
+            elif len(cart.products) == 1:
+                for item in cart.products:
+                    print(f"Item : {item}")
+                    for id, quantity in item.items():
+                        if currProduct == id:
+                            cart.products[0][id] += 1
+                            cart.price = (cart.price + product.price) if (cart.price is not None) else (product.price)
+                            item_in_cart = True      # change item_in_cart to True if item is in cart
+
+                if item_in_cart == False:    # if item_in_cart is false
+                    print(f"Add status : {item_in_cart}")
+                    
+                    cart.products[0].update({
+                        currProduct: 1,
+                    })
+                    cart.price += product.price
+            else:
+                context.update({"Message": "Something Went Wrong with the cart\n Your cart is empty now"})
+                cart.products = []
                 
             # print(f"Add status : {addStatus['stauts']}")
             #     print(f"Add status : {addStatus['stauts']}")
@@ -219,7 +281,7 @@ def home(request):
         # print(f"default session_id ---> {request.COOKIES.get("sessionid")}")
         # print(f"Cookie Data --->{request.COOKIES}")
         # print(f"custom user session_id ---> {request.session.items()}")
-        return render(request, "home.html", {"user": user, "products": products})
+        return render(request, "home.html", context)
     else:
         print("--- NOT LOGGED IN ----")
         print(f"User: {user}")
@@ -227,26 +289,65 @@ def home(request):
         return render(request, "home.html", {"products": products})
 
 
+def search(request):
+    user = get_user_from_session(request)
+    query = request.GET.get('q', '')
+    results = Product.objects.filter(name__icontains=query)
+
+    # Serialize products with id and slug
+    result_data = []
+    for product in results:
+        result_data.append({
+            'id': product.id,
+            'name': product.name,
+            'description': product.description,
+            'price': product.price,
+            'slug': slugify(product.name)
+        })
+
+    context = {
+        'query': query,
+        'results': results,
+        'results_json': json.dumps(result_data)
+    }
+
+    if user is None:
+        return render(request, 'search.html', context)
+
+    context.update({"user": user})
+    return render(request, 'search.html', context)
+
+
 def cart(request):
     user = get_user_from_session(request)
     if user is not None:
         cart = Cart.objects.get(user = user)
-        tax = (cart.price * 18)/100 if cart.price else 0
+        # tax = (cart.price * 18)/100 if cart.price else 0
+        context = {
+            "user": user, 
+            "cart": cart,
+            # "tax": tax,
+            # "products": products,
+            # "qty": cart.products[0],
+            "products": cart.products[0] if cart.products else [],
+        }
         # cart.price = tax+cart.price if tax > 0 else cart.price
         
         # productList = cart.products
-        productList = [key for item in cart.products for key in item.keys()]
-        print(f"productList = {productList}")
+        # productList = [key for item in cart.products for key in item.keys()]
+        # if cart.products:
+        #     productList = [key for key in cart.products[0].keys()]
+
+        # print(f"productList = {productList}")
         # for i in cart.products:
         #     print(f"i = {i}")
         #     productList.append(i["id"])
 
-        products = []
-        for i in productList:
-            products.append(Product.objects.get(id = i))
+        # products = []
+        # for i in productList:
+        #     products.append(Product.objects.get(id = i))
 
         # print(products)
-        
         if request.method == "POST":
             # temp = request.POST["currProduct"]
             # tempP = Product.objects.get(id = temp)
@@ -254,52 +355,51 @@ def cart(request):
             if "removeItem" in request.POST:
                 # print(f"Delete {Product.objects.get(id = temp)} form cart")        
                 currProduct = request.POST["currProduct"]
-                for item in cart.products:
-                    for id, quantity in item.items():
-                        if currProduct == id:
-                            cart.products.remove(item)
-                            cart.price -= (Product.objects.get(id = currProduct).price * quantity)
-                            break
+                for id, quantity in cart.products[0].items():
+                    # for id, quantity in item.items():
+                    if currProduct == id:
+                        cart.products[0].pop(id)
+                        cart.price -= (Product.objects.get(id = currProduct).price * quantity)
+                        break
                         # print(f"currProduct: {currProduct}")        
-                        # print(f"item[id]: {id}")        
+                        # print(f"cart.products[0][id]: {id}")        
                         # print(f"item[currProduct]: {quantity}")        
             elif "decrement" in request.POST:
                 currProduct = request.POST["currProduct"]
-                for item in cart.products:
-                    for id, quantity in item.items():
-                        if currProduct == id:
-                            if quantity > 1:
-                                print("Quantity - decrement one")        
-                                print(f"currProduct: {Product.objects.get(id = currProduct)}")        
-                                item[id] -= 1
-                            else:
-                                cart.products.remove(item)
-                            print(f"{Product.objects.get(id = currProduct).price} + {cart.price} Price")                    
-                            cart.price -= Product.objects.get(id = currProduct).price
-                            break
+                for id, quantity in cart.products[0].items():
+                    # for id, quantity in item.items():
+                    if currProduct == id:
+                        if quantity > 1:
+                            print("Quantity - decrement one")        
+                            print(f"currProduct: {Product.objects.get(id = currProduct)}")        
+                            cart.products[0][id] -= 1
+                        else:
+                            cart.products[0].pop(id)
+                        print(f"{Product.objects.get(id = currProduct).price} + {cart.price} Price")                    
+                        cart.price -= Product.objects.get(id = currProduct).price
+                        break
             elif "increment" in request.POST:
                 currProduct = request.POST["currProduct"]
-                for item in cart.products:
-                    for id, quantity in item.items():
-                        if id == currProduct:
-                            print(f"currProduct: {Product.objects.get(id = currProduct)}")        
-                            item[id] = quantity + 1
-                            print(f"{Product.objects.get(id = currProduct).price} + {cart.price} Price")                    
-                            cart.price += Product.objects.get(id = currProduct).price
-                            break
+                for id, quantity in cart.products[0].items():
+                    # for id, quantity in item.items():
+                    if id == currProduct:
+                        print(f"currProduct: {Product.objects.get(id = currProduct)}")        
+                        cart.products[0][id] = quantity + 1
+                        print(f"{Product.objects.get(id = currProduct).price} + {cart.price} Price")                    
+                        cart.price += Product.objects.get(id = currProduct).price
+                        break
             
-            print(products)
+            # print(products)
+
             cart.save()
             return HttpResponseRedirect("../cart")
         
-        context = {
-            "user": user, 
-            "cart": cart,
-            "tax": tax,
-            "products": zip(products,cart.products),
-        }
-        if productList == []:
-            context.pop("products")
+
+        # if productList == []:
+        #     context.pop("products")
+        # cart.price = 0
+        # cart.products = []
+        # cart.save()
         return render(request, "cart.html", context)
     else:
         return render(request, "cart.html")
@@ -325,7 +425,8 @@ def checkout(request):
         context = {
             "user": user,
             "cart": cart,
-            "products": zip(products,cart.products),
+            # "products": zip(products,cart.products),
+            "products": cart.products[0] if cart.products else [],
         }
 
         return render(request, "checkout.html", context)
@@ -372,13 +473,19 @@ def profile(request):
                 user.name = request.POST.get("name", user.name)
                 user.email = request.POST.get("email", user.email)
                 user.password = request.POST.get("password", user.password)
+                # encrypt
+                # password = password.encode()
+                # password = hashlib.sha256(password).hexdigest()
+                
                 user.contact = request.POST.get("contact", user.contact)  # Only update contact if provided
-
-                print("Changes")
-                print(f"{user.name}")
-                print(f"{user.email}")
-                print(f"{user.password}")
-                print(f"{user.contact}")
+                # print(request.POST  )
+                if request.FILES.get("image"):
+                    user.image = request.FILES["image"]
+                print(f"Changes: {request.POST}")
+                # print(f"{user.name}")
+                # print(f"{user.email}")
+                # print(f"{user.password}")
+                # print(f"{user.contact}")
                 user.save()  # Save the updated user data
                 return HttpResponseRedirect("../profile")  # Redirect to the profile page after saving
                 
@@ -386,6 +493,10 @@ def profile(request):
             elif "deleteAccount" in request.POST:
                 print(f"--- DELETE ACCOUNT FORM POST ---")
                 password = request.POST.get("password", "")
+                #encrypt
+                # password = password.encode()
+                # password = hashlib.sha256(password).hexdigest()
+
                 if password == user.password:  # Check if entered password matches user's password
                     print(f"--- User({user.name}) Deleted ---")
                     
@@ -401,9 +512,18 @@ def profile(request):
             # print(f"-- POST data: {request.POST} --")
             return render(request, "profile.html", {"user": user})
             
-        except:
-            return render(request, "profile.html", {"user": user, "message2": "Duplicate record Found!!"})
+        except AttributeError as e:
+            # print("Errro -> " , type(e))
+            return render(request, "profile.html", {"user": user, "message2": "Image Handling error!!"})
+        except IntegrityError as e:
+            print(e)
+            cause = str(e).split(".")[-1]
+            print(f"Cause: {cause}")
+
+            return render(request, "profile.html", {"user": user, "message2": f"Duplicate \'{cause.capitalize()}\' Found!!"})
     # Handling GET request or when no POST action is triggered
+
+    
     return render(request, "profile.html", {"user": user})
 
 
@@ -411,16 +531,17 @@ def address(request):
     user = get_user_from_session(request)
     if user is not None:
         if request.method == "POST":
-            if "edit" in request.POST:
-                print("  --Edit Button Clicked")
+            if "delete" in request.POST:
+                print("  --Delete Button Clicked")
                 curr_address = get_formatted_address(request)
-                for address in user.address:
-                    if address["id"] == curr_address["id"]:
-                        index = user.address.index(address)
-                        user.address[index] = curr_address
-
-                # address = user.address.index(curr_address)
                 print(curr_address)
+                for address in user.address:
+                    if address["id"] == curr_address["delete"]:
+                        index = user.address.index(address)
+                        user.address.pop(index)
+
+                # print(user.address)
+                # address = user.address.index(curr_address)
                 # for address in user.addresses:
                     
             else:
@@ -471,26 +592,38 @@ def orderConfirmation(request):
             print(f"orderID: {orderID}")
             print(f"Price: {request.POST}")
 
+            # Formatting address to pass it as an dict
+            address = (request.POST["savedAddress"]
+                    .replace("namespace", "")
+                    .strip()
+                    .replace("(", "{")
+                    .replace(")", "}")
+                    .replace("'", '"'))
+            address = re.sub(r'(\w+)=', r'"\1":', address)
+            address = ast.literal_eval(address)
+
+            print(f"address :--- {address}\n\n\nType = {type(address)}")
             order = Orders(
                 orderID = orderID,
                 price = request.POST['price'],
-                address = request.POST['savedAddress'],
+                address = address,
                 shipment = request.POST['shippingMethod'][0].lower(),
                 paymentMethod = request.POST['paymentMethod'],
                 products = cart.products
             )
-            order.save()
             
             # Add order to the user orderList
-            # user.order.append(order.orderID)
+            user.order.append(order.orderID)
+            # user.order = []  # this is for removing all orders from user db
 
             # user.order.remove("MVM-1-2025051949")
             # user.order.remove("MVM-1-2025051996")
-            # user.save()
+            order.save()
+            user.save()
             
             # Remove Products from cart
-            # cart.products = []
-            # cart.save()
+            cart.products = []
+            cart.save()
 
             # Delete all orders
             # order = Orders.objects.all()
@@ -512,12 +645,18 @@ def orderConfirmation(request):
 def orders(request):
     user = get_user_from_session(request)
     if user is not None:
+        orders = user.order
+        print(orders)
         context = {
             "user": user,
+            "orders": orders,
         }
         return render(request, "orders.html", context)
     return HttpResponseRedirect("/login")
 
+
+def test(request):
+    return render(request, "test.html")
 # -------------------------------------------------------------------------------------------------------------------------
 
 

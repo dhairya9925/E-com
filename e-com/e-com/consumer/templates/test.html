@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Detail Cards - Dark Mode</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-effect {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+    </style>
+</head>
+<body class="dark bg-gray-950 min-h-screen p-6">
+    <div class="max-w-7xl mx-auto space-y-8">
+        <h1 class="text-3xl font-bold text-white mb-8 text-center">Order Detail Cards - Dark Mode</h1>
+        
+        <!-- Card Style 1: Modern Glassmorphism -->
+        <div class="glass-effect bg-gray-900/60 border border-gray-700/50 rounded-2xl p-6 hover:border-blue-500/50 transition-all duration-300 animate-fade-in">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h2 class="text-xl font-semibold text-white mb-1">Order #ORD-2024-001</h2>
+                    <p class="text-gray-400 text-sm">Placed on Dec 15, 2024</p>
+                </div>
+                <span class="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-medium border border-green-500/30">
+                    Delivered
+                </span>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <div class="bg-gray-800/50 rounded-lg p-4 border border-gray-700/30">
+                        <h3 class="text-gray-300 text-sm font-medium mb-2">Items (3)</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-white">MacBook Pro 16" × 1</span>
+                                <span class="text-gray-400">$2,499.00</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-white">Magic Mouse × 1</span>
+                                <span class="text-gray-400">$79.00</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-white">USB-C Cable × 2</span>
+                                <span class="text-gray-400">$38.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="bg-gray-800/50 rounded-lg p-4 border border-gray-700/30">
+                        <h3 class="text-gray-300 text-sm font-medium mb-2">Shipping Address</h3>
+                        <p class="text-white text-sm leading-relaxed">
+                            John Doe<br>
+                            123 Tech Street, Suite 456<br>
+                            San Francisco, CA 94102<br>
+                            United States
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-700/50">
+                <div class="text-white">
+                    <span class="text-2xl font-bold">$2,616.00</span>
+                    <span class="text-gray-400 ml-2 text-sm">Total</span>
+                </div>
+                <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors duration-200">
+                    View Details
+                </button>
+            </div>
+        </div>
+
+        <!-- Card Style 2: Minimalist Clean -->
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 animate-slide-up">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-white">Order #ORD-2024-002</h2>
+                        <p class="text-gray-500 text-sm">Dec 14, 2024 • 2:30 PM</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-2xl font-bold text-white">$849.99</div>
+                    <div class="flex items-center space-x-1 mt-1">
+                        <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                        <span class="text-yellow-500 text-sm">Processing</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="text-center p-3 bg-gray-800/50 rounded-lg">
+                        <div class="text-gray-400 text-xs uppercase tracking-wider mb-1">Items</div>
+                        <div class="text-white font-semibold">5</div>
+                    </div>
+                    <div class="text-center p-3 bg-gray-800/50 rounded-lg">
+                        <div class="text-gray-400 text-xs uppercase tracking-wider mb-1">Weight</div>
+                        <div class="text-white font-semibold">2.3 kg</div>
+                    </div>
+                    <div class="text-center p-3 bg-gray-800/50 rounded-lg">
+                        <div class="text-gray-400 text-xs uppercase tracking-wider mb-1">Shipping</div>
+                        <div class="text-white font-semibold">Express</div>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-2">
+                    <button class="flex-1 bg-gray-800 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition-colors text-sm">
+                        Track Order
+                    </button>
+                    <button class="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg transition-colors text-sm">
+                        View Invoice
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Style 3: Detailed Timeline -->
+        <div class="bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 rounded-2xl p-6 hover:border-gray-600 transition-all duration-300">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-xl font-bold text-white mb-1">Order #ORD-2024-003</h2>
+                    <div class="flex items-center space-x-2 text-sm text-gray-400">
+                        <span>Dec 13, 2024</span>
+                        <span>•</span>
+                        <span>Customer: Sarah Johnson</span>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-2xl font-bold text-white">$1,234.56</div>
+                    <span class="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-xs font-medium border border-blue-500/30">
+                        Shipped
+                    </span>
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-gray-300 font-medium mb-3">Order Timeline</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-3 h-3 bg-green-500 rounded-full mt-1"></div>
+                            <div>
+                                <div class="text-white text-sm font-medium">Order Placed</div>
+                                <div class="text-gray-500 text-xs">Dec 13, 2024 - 10:30 AM</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-3 h-3 bg-green-500 rounded-full mt-1"></div>
+                            <div>
+                                <div class="text-white text-sm font-medium">Payment Confirmed</div>
+                                <div class="text-gray-500 text-xs">Dec 13, 2024 - 10:35 AM</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full mt-1 animate-pulse"></div>
+                            <div>
+                                <div class="text-white text-sm font-medium">Shipped</div>
+                                <div class="text-gray-500 text-xs">Dec 14, 2024 - 9:15 AM</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-3 h-3 bg-gray-600 rounded-full mt-1"></div>
+                            <div>
+                                <div class="text-gray-400 text-sm">Expected Delivery</div>
+                                <div class="text-gray-500 text-xs">Dec 16, 2024</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-gray-300 font-medium mb-3">Order Summary</h3>
+                    <div class="bg-gray-800/50 rounded-lg p-4 space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Subtotal</span>
+                            <span class="text-white">$1,199.99</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Tax</span>
+                            <span class="text-white">$84.00</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Shipping</span>
+                            <span class="text-green-400">Free</span>
+                        </div>
+                        <div class="border-t border-gray-700 pt-2 mt-2">
+                            <div class="flex justify-between font-semibold">
+                                <span class="text-white">Total</span>
+                                <span class="text-white">$1,283.99</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 pt-4 border-t border-gray-700 flex justify-end space-x-3">
+                <button class="px-4 py-2 text-gray-400 hover:text-white border border-gray-700 hover:border-gray-600 rounded-lg transition-colors">
+                    Download Receipt
+                </button>
+                <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                    Contact Support
+                </button>
+            </div>
+        </div>
+
+        <!-- Card Style 4: Compact Dashboard Style -->
+        <div class="bg-gray-900/95 backdrop-blur-sm border border-gray-800 rounded-xl p-4 hover:bg-gray-900 transition-all duration-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-tr from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center">
+                        <span class="text-white font-bold">04</span>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold">Order #ORD-2024-004</h3>
+                        <p class="text-gray-500 text-sm">3 items • $456.78</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <div class="text-white text-sm font-medium">Dec 12, 2024</div>
+                        <div class="flex items-center space-x-1">
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span class="text-green-400 text-xs">Completed</span>
+                        </div>
+                    </div>
+                    
+                    <button class="w-8 h-8 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Style 5: Feature-Rich Card -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl shadow-xl max-w-3xl mx-auto overflow-hidden transition hover:border-gray-700 duration-300">
+  <!-- Header -->
+  <div class="bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-700 p-5 flex items-center justify-between">
+    <div>
+      <h2 class="text-white text-xl font-semibold">Order #ORD-2024-005</h2>
+      <p class="text-purple-200 text-sm mt-1">Priority Delivery – VIP Customer</p>
+    </div>
+    <div class="text-sm text-white bg-white/20 backdrop-blur-sm px-4 py-1 rounded-md font-medium">
+      Premium
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="p-6 space-y-6">
+    
+    <!-- Item Details -->
+    <div>
+      <h3 class="text-gray-300 text-base font-medium mb-3">Items Ordered</h3>
+      <div class="divide-y divide-gray-700 text-sm">
+        <div class="flex justify-between py-2">
+          <span class="text-white">MacBook Pro 16”</span>
+          <span class="text-gray-400">1 × $2,499.00</span>
+        </div>
+        <div class="flex justify-between py-2">
+          <span class="text-white">Magic Mouse 2</span>
+          <span class="text-gray-400">1 × $99.00</span>
+        </div>
+        <div class="flex justify-between py-2">
+          <span class="text-white">AppleCare+</span>
+          <span class="text-gray-400">1 × $199.00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment & Summary -->
+    <div class="grid md:grid-cols-2 gap-6">
+      
+      <!-- Payment Info -->
+      <div>
+        <h3 class="text-gray-300 text-base font-medium mb-3">Payment</h3>
+        <div class="bg-gray-800/40 p-4 rounded-lg space-y-1">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-6 flex items-center justify-center bg-gradient-to-br from-blue-600 to-blue-900 rounded">
+              <span class="text-white text-xs font-bold">VISA</span>
+            </div>
+            <div>
+              <p class="text-white text-sm">•••• •••• •••• 4567</p>
+              <p class="text-gray-400 text-xs">Exp: 12/26</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total + Status -->
+      <div>
+        <h3 class="text-gray-300 text-base font-medium mb-3">Summary</h3>
+        <div class="bg-gray-800/40 p-4 rounded-lg space-y-2">
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400">Subtotal</span>
+            <span class="text-white">$2,797.00</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400">Tax</span>
+            <span class="text-white">$502.99</span>
+          </div>
+          <div class="border-t border-gray-700 pt-2 flex justify-between font-semibold text-base">
+            <span class="text-gray-300">Total</span>
+            <span class="text-white">$3,299.99</span>
+          </div>
+          <div class="text-right">
+            <span class="inline-block mt-2 px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm border border-green-500/30">Delivered</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex flex-col sm:flex-row gap-3 pt-2">
+      <button class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-medium transition">
+        Reorder Items
+      </button>
+      <button class="flex-1 border border-gray-700 hover:border-gray-600 text-gray-300 hover:text-white py-3 rounded-lg font-medium transition">
+        Download Invoice
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="bg-gray-900 border border-gray-800 rounded-2xl shadow-xl max-w-4xl mx-auto overflow-hidden transition hover:border-gray-700 duration-300">
+  <!-- Header -->
+  <div class="bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-700 p-5 flex items-center justify-between">
+    <div>
+      <h2 class="text-white text-lg font-semibold">Order #ORD-2023-1004</h2>
+      <p class="text-purple-200 text-sm mt-1">Ordered on 5/13/2023</p>
+    </div>
+    <span class="inline-flex items-center text-xs font-medium bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full border border-yellow-500/30">
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      Pending
+    </span>
+  </div>
+
+  <!-- Body -->
+  <div class="p-6 space-y-6">
+    <!-- Item -->
+    <div class="flex items-center">
+      <img src="https://placehold.co/80x80/e2e8f0/1e293b?text=Tablet" alt="Tablet" class="w-14 h-14 object-cover rounded mr-4">
+      <div>
+        <p class="text-sm font-medium text-white">Tablet</p>
+        <p class="text-xs text-gray-400">Qty: 1</p>
+      </div>
+    </div>
+
+    <!-- Total & Button -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <p class="text-sm text-gray-400">Total</p>
+        <p class="text-2xl font-bold text-white">$349.99</p>
+      </div>
+      <button class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-6 rounded-lg transition-colors font-medium view-order" data-id="ORD-2023-1004">
+        View Order
+      </button>
+    </div>
+  </div>
+</div>
+
+
+        {% comment %}  {% endcomment %}
+<!-- Full Order Detail Modal (Merged Card 1 + Card 2 Theme) -->
+<div id="order-detail-modal" class="fixed hidden inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-start justify-center overflow-y-auto py-10">
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl shadow-xl w-full max-w-5xl mx-4 overflow-hidden transition">
+
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-700 p-5 flex items-center justify-between">
+        <div>
+            <h2 class="text-white text-xl font-semibold">Order #ORD-2024-005</h2>
+            <p class="text-purple-200 text-sm mt-1">Priority Delivery – VIP Customer</p>
+        </div>
+        <button id="close-order-detail" class="text-white hover:text-gray-300 transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 space-y-8">
+
+        <!-- Order Status Tracker -->
+        <div>
+            <h3 class="text-gray-300 text-base font-medium mb-3">Order Progress</h3>
+            <div class="relative">
+            <div class="overflow-hidden h-2 mb-6 rounded bg-gray-700">
+                <div id="progress-bar" class="bg-indigo-500 h-full transition-all duration-300" style="width: 75%"></div>
+            </div>
+            <div class="flex justify-between text-xs text-gray-400">
+                <div class="text-center">
+                <div class="w-6 h-6 mb-1 rounded-full bg-green-500 text-white flex items-center justify-center">✓</div>
+                <span>Placed</span>
+                </div>
+                <div class="text-center">
+                <div class="w-6 h-6 mb-1 rounded-full bg-green-500 text-white flex items-center justify-center">✓</div>
+                <span>Processing</span>
+                </div>
+                <div class="text-center">
+                <div class="w-6 h-6 mb-1 rounded-full bg-indigo-500 text-white flex items-center justify-center">✓</div>
+                <span>Shipped</span>
+                </div>
+                <div class="text-center">
+                <div class="w-6 h-6 mb-1 rounded-full bg-gray-600 text-white flex items-center justify-center">✓</div>
+                <span>Delivered</span>
+                </div>
+            </div>
+            <p class="text-sm text-gray-400 mt-4">
+                Your order is on its way. Expected delivery by <span class="text-white font-medium">June 20, 2025</span>.
+            </p>
+            </div>
+        </div>
+
+        <!-- Items Ordered -->
+        <div>
+            <h3 class="text-gray-300 text-base font-medium mb-3">Items Ordered</h3>
+            <div class="divide-y divide-gray-700 text-sm">
+            <div class="flex justify-between py-2">
+                <span class="text-white">MacBook Pro 16”</span>
+                <span class="text-gray-400">1 × $2,499.00</span>
+            </div>
+            <div class="flex justify-between py-2">
+                <span class="text-white">Magic Mouse 2</span>
+                <span class="text-gray-400">1 × $99.00</span>
+            </div>
+            <div class="flex justify-between py-2">
+                <span class="text-white">AppleCare+</span>
+                <span class="text-gray-400">1 × $199.00</span>
+            </div>
+            </div>
+        </div>
+
+        <!-- Order Info & Shipping -->
+        <div class="grid md:grid-cols-2 gap-6 text-sm">
+            <div>
+            <h3 class="text-gray-300 text-base font-medium mb-3">Order Information</h3>
+            <p class="text-gray-400">Date: <span class="text-white">June 14, 2025</span></p>
+            <p class="text-gray-400">Status: <span class="text-white">Shipped</span></p>
+            <p class="text-gray-400">Payment Method: <span class="text-white">VISA ending in 4567</span></p>
+            </div>
+            <div>
+            <h3 class="text-gray-300 text-base font-medium mb-3">Shipping Address</h3>
+            <p class="text-white">Michael Chen</p>
+            <p class="text-gray-400">1234 Apple Lane<br>San Francisco, CA 94105<br>USA<br>+1 (555) 123-4567</p>
+            </div>
+        </div>
+
+        <!-- Payment & Summary -->
+        <div class="grid md:grid-cols-2 gap-6">
+            <div>
+            <h3 class="text-gray-300 text-base font-medium mb-3">Payment</h3>
+            <div class="bg-gray-800/40 p-4 rounded-lg space-y-1">
+                <div class="flex items-center space-x-3">
+                <div class="w-10 h-6 flex items-center justify-center bg-gradient-to-br from-blue-600 to-blue-900 rounded">
+                    <span class="text-white text-xs font-bold">VISA</span>
+                </div>
+                <div>
+                    <p class="text-white text-sm">•••• •••• •••• 4567</p>
+                    <p class="text-gray-400 text-xs">Exp: 12/26</p>
+                </div>
+                </div>
+            </div>
+            </div>
+
+            <div>
+            <h3 class="text-gray-300 text-base font-medium mb-3">Summary</h3>
+            <div class="bg-gray-800/40 p-4 rounded-lg space-y-2">
+                <div class="flex justify-between text-sm">
+                <span class="text-gray-400">Subtotal</span>
+                <span class="text-white">$2,797.00</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                <span class="text-gray-400">Shipping</span>
+                <span class="text-white">$50.00</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                <span class="text-gray-400">Tax</span>
+                <span class="text-white">$452.99</span>
+                </div>
+                <div class="border-t border-gray-700 pt-2 flex justify-between font-semibold text-base">
+                <span class="text-gray-300">Total</span>
+                <span class="text-white">$3,299.99</span>
+                </div>
+                <div class="text-right">
+                <span class="inline-block mt-2 px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm border border-green-500/30">Shipped</span>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3 pt-2">
+            <button class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-medium transition">
+            Reorder Items
+            </button>
+            <button class="flex-1 border border-gray-700 hover:border-gray-600 text-gray-300 hover:text-white py-3 rounded-lg font-medium transition">
+            Download Invoice
+            </button>
+            <button class="flex-1 border border-gray-700 hover:border-gray-600 text-gray-300 hover:text-white py-3 rounded-lg font-medium transition">
+            Track Package
+            </button>
+            <button class="flex-1 border border-gray-700 hover:border-gray-600 text-gray-300 hover:text-white py-3 rounded-lg font-medium transition">
+            Contact Support
+            </button>
+        </div>
+
+        </div>
+    </div>
+</div>
+        {% comment %}  {% endcomment %}
+    </div>
+    <script>
+        // Show modal
+        function openOrderDetailModal() {
+            document.getElementById('order-detail-modal').classList.remove('hidden');
+        }
+
+        // Close modal
+        document.getElementById('close-order-detail')?.addEventListener('click', () => {
+            document.getElementById('order-detail-modal').classList.add('hidden');
+        });
+    </script>
+
+</body>
+</html>

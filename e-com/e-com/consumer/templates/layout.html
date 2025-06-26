@@ -30,21 +30,19 @@
                 <div class="flex items-center space-x-4">
                     <h1 class="text-2xl font-bold">
                         <a href="/">
-                            MV-M
+                            <img src="../static/logo.png" height="auto" width="14%" class="ml-8" alt="">
                         </a>
                     </h1>
-                    <div class="hidden md:flex space-x-4">
-                        <a href="/" class="hover:text-blue-400 transition">Home</a>
-                        <a href="#" class="hover:text-blue-400 transition">Shop</a>
-                        <a href="#" class="hover:text-blue-400 transition">Categories</a>
-                        <a href="#" class="hover:text-blue-400 transition">Deals</a>
-                    </div>
+
                 </div>
                 <div class="flex items-center space-x-4">
-                    <div class="relative">
-                        <input type="search" placeholder="Search products..." 
-                            class="bg-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
+                    <form action="/search" method="GET" class="relative">
+                        <input type="search" name="q" id="search" placeholder="Search products..."
+                            class="bg-gray-700 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button type="submit" id="search-btn" class="absolute right-2 top-2 text-gray-300 hover:text-white" disabled>
+                            <i class="fas fa-search mr-3"></i>
+                        </button>
+                    </form>
                     <a href="/cart">
                         <button class="relative" id="cartButton">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -60,9 +58,32 @@
                     {% endcomment %}
                     {% if user %}
                         
-                        <div class="relative">
-                            <a href="/profile" class="text-sm">{{ user.name }}</a>
+                        <div class="relative group inline-block text-left">
+                            <!-- Trigger -->
+                            <a href="#" class="text-sm cursor-pointer text-white px-3 py-2 rounded hover:bg-gray-700">
+                                {{ user.name }}
+                            </a>
+
+                            <!-- Dropdown Menu (with smooth fade and safe position) -->
+                            <!-- Dropdown Menu -->
+                            <div class="absolute right-0 mt-2 z-10
+                                        opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto
+                                        transition-opacity duration-300 ease-in-out
+                                        bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg w-44">
+                                <a href="/orders" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <span class="material-icons text-base">receipt_long</span> Orders
+                                </a>
+                                <a href="/profile" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <span class="material-icons text-base">person</span> Profile
+                                </a>
+                                <a href="/profile/address" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <span class="material-icons text-base">location_on</span> Addresses
+                                </a>
+                            </div>
                         </div>
+
+
+
                     {% else %}
                         <div class="relative" id="LoginSignupButton">
                             <a href="/login" id="LoginButton" class="text-sm">Login</a> <i id="slash">/</i> <a href="/register"  id="SignupButton" class="text-sm">Sign up</a>
@@ -74,7 +95,18 @@
             </div>
         </nav>
     </header>
+    <script>
+        const searchInput = document.getElementById("search");
+        const searchButton = document.getElementById("search-btn");
 
+        searchInput.addEventListener("input", function () {
+            if (searchInput.value.trim() !== "") {
+                searchButton.disabled = false;
+            } else {
+                searchButton.disabled = true;
+            }
+        });
+    </script>
     {% block content %}{% endblock %}
     
     <!-- Footer -->
@@ -131,6 +163,24 @@
             </div>
         </footer>
     {% endblock %}
+    <script>
+        // Function to update cart count dynamically
+        async function updateCartCount() {
+            try {
+                const response = await fetch('/cart/count');  // Your backend endpoint to get cart count
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById("cartCount").textContent = data.count;
+                }
+            } catch (error) {
+                console.error("Failed to update cart count:", error);
+            }
+        }
+
+        // Call it on page load
+        document.addEventListener("DOMContentLoaded", updateCartCount);
+    </script>
+
 
 </body>
 </html>

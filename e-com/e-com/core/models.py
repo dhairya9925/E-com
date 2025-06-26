@@ -52,29 +52,30 @@ class Product(models.Model):
 
 class Orders(models.Model):
     STATUS_LIST = [
-        ("p", "pending") ,
-        ("s", "shipped") ,
-        ("d", "delivered") ,
-        ("c", "canceled") ,
+        ("p", "Placed") ,
+        ("pr", "Processing") ,
+        ("s", "Shipped") ,
+        ("d", "Delivered") ,
+        ("c", "Canceled") ,
     ]
 
-    SHIPMENT_TYPE ={
-        "s": "Standart",
-        "e": "Express",
-    }
+    SHIPMENT_TYPE =[
+        ("s", "Standart"),
+        ("e", "Express"),
+    ]
 
-    PAYMENT_TYPES = {
-        "p": "Pay on Delivery",
-        "c": "Credit/Debit Card",
-        "u": "UPI",
-    }
+    PAYMENT_TYPES = [
+        ("p", "Pay on Delivery"),
+        ("c", "Credit/Debit Card"),
+        ("u", "UPI"),
+    ]
     
     # quantity = models.IntegerField()
-    orderID = models.CharField(max_length=20)
+    orderID = models.CharField(max_length=20, unique=True)
     price = models.IntegerField()
     address = models.CharField(max_length=19)
     orderOn = models.DateTimeField(auto_now_add=True, blank=True)
-    status = models.CharField( max_length=1, choices=STATUS_LIST, default='p')
+    status = models.CharField( max_length=2, choices=STATUS_LIST, default='p')
     shipment = models.CharField(choices = SHIPMENT_TYPE, max_length=1, default="s")
     paymentMethod = models.CharField(choices = PAYMENT_TYPES, max_length=1, default="p")
     products = models.JSONField(default="list", blank="True")
@@ -84,5 +85,5 @@ class Orders(models.Model):
     # buyer = models.ForeignKey(users, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.id
+        return self.orderID
 

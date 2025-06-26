@@ -1,11 +1,13 @@
 from django.db import models
+import os
+from mysite.settings import MEDIA_ROOT
 from core.models import Orders, Product
 # from django.db.models import JSONField
 
 
 # Create your models here.
 class users(models.Model):
-    image = models.ImageField(upload_to="users/", null=True, blank=True)
+    image = models.ImageField(upload_to=os.path.join(MEDIA_ROOT, "consumer/images"), null=True, blank=True)
     name = models.CharField(max_length=50, unique=True)
     email = models.CharField(max_length=200, unique=True)
     password = models.CharField(max_length=100)
